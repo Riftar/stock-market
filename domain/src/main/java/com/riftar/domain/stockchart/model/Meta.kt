@@ -1,0 +1,32 @@
+package com.riftar.domain.stockchart.model
+
+data class Meta(
+    val currency: String,
+    val symbol: String,
+    val exchangeName: String,
+    val fullExchangeName: String,
+    val instrumentType: String,
+    val firstTradeDate: Int,
+    val regularMarketTime: Int,
+    val hasPrePostMarketData: Boolean,
+    val gmtoffset: Int,
+    val timezone: String,
+    val exchangeTimezoneName: String,
+    val regularMarketPrice: Double,
+    val fiftyTwoWeekHigh: Double,
+    val fiftyTwoWeekLow: Double,
+    val regularMarketDayHigh: Double,
+    val regularMarketDayLow: Double,
+    val regularMarketVolume: Double,
+    val longName: String,
+    val shortName: String,
+    val chartPreviousClose: Double,
+    val previousClose: Double,
+    val scale: Int,
+    val priceHint: Int,
+    val currentTradingPeriod: CurrentTradingPeriod,
+    val tradingPeriods: List<List<TradingPeriod>>,
+    val dataGranularity: String,
+    val range: String,
+    val validRanges: List<String>
+)
