@@ -5,20 +5,14 @@ import com.riftar.common.helper.orZero
 import com.riftar.data.stockchart.response.CurrentTradingPeriodResponse
 import com.riftar.data.stockchart.response.IndicatorsResponse
 import com.riftar.data.stockchart.response.MetaResponse
-import com.riftar.data.stockchart.response.PostResponse
-import com.riftar.data.stockchart.response.PreResponse
 import com.riftar.data.stockchart.response.QuoteResponse
-import com.riftar.data.stockchart.response.RegularResponse
 import com.riftar.data.stockchart.response.ResultResponse
 import com.riftar.data.stockchart.response.TradingPeriodResponse
+import com.riftar.domain.stockchart.model.ChartResult
 import com.riftar.domain.stockchart.model.CurrentTradingPeriod
 import com.riftar.domain.stockchart.model.Indicators
 import com.riftar.domain.stockchart.model.Meta
-import com.riftar.domain.stockchart.model.Post
-import com.riftar.domain.stockchart.model.Pre
 import com.riftar.domain.stockchart.model.Quote
-import com.riftar.domain.stockchart.model.Regular
-import com.riftar.domain.stockchart.model.ChartResult
 import com.riftar.domain.stockchart.model.TradingPeriod
 
 
@@ -64,27 +58,6 @@ fun CurrentTradingPeriodResponse?.toDomainModel() = CurrentTradingPeriod(
     pre = this?.pre.toDomainModel(),
     regular = this?.regular.toDomainModel(),
     post = this?.post.toDomainModel()
-)
-
-fun PreResponse?.toDomainModel() = Pre(
-    timezone = this?.timezone.orEmpty(),
-    end = this?.end.orZero(),
-    start = this?.start.orZero(),
-    gmtoffset = this?.gmtoffset.orZero()
-)
-
-fun RegularResponse?.toDomainModel() = Regular(
-    timezone = this?.timezone.orEmpty(),
-    end = this?.end.orZero(),
-    start = this?.start.orZero(),
-    gmtoffset = this?.gmtoffset.orZero()
-)
-
-fun PostResponse?.toDomainModel() = Post(
-    timezone = this?.timezone.orEmpty(),
-    end = this?.end.orZero(),
-    start = this?.start.orZero(),
-    gmtoffset = this?.gmtoffset.orZero()
 )
 
 fun TradingPeriodResponse?.toDomainModel() = TradingPeriod(
