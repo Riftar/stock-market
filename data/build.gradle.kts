@@ -39,6 +39,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
+    implementation(project(":core:common"))
 
     api(libs.retrofit)
     api(libs.okHttp)
