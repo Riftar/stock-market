@@ -1,6 +1,5 @@
 package com.riftar.stockchart
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.riftar.domain.stockchart.model.ChartResult
@@ -22,7 +21,6 @@ class StockChartViewModel(private val getStockChartUseCase: GetStockChartUseCase
                     result.onSuccess { data ->
                         _stockChartState.value = StockChartState.Success(data)
                     }.onFailure { exception ->
-                        Log.d("Rifqi-test", "getStockChartData: $exception")
                         _stockChartState.value =
                             StockChartState.Error(exception.message ?: "Unknown error occurred")
                     }

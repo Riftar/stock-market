@@ -1,6 +1,5 @@
 package com.riftar.data.stockchart.repository
 
-import android.util.Log
 import com.riftar.data.stockchart.api.StockChartAPI
 import com.riftar.data.stockchart.mapper.toDomainModel
 import com.riftar.domain.stockchart.model.ChartResult
@@ -15,20 +14,17 @@ import okio.IOException
 class StockChartRepositoryImpl(private val api: StockChartAPI) : StockChartRepository {
     override fun getStockChart(stockCode: String): Flow<Result<ChartResult>> = flow {
         try {
+            // 1. Call the API and get the response
             val response = api.getStockChart(stockCode)
             val result = response.body()?.chart
 
-            Log.d("Rifqi-test", "result $result")
+            // 2. Check if the response is successful and the result is not null
             if (response.isSuccessful && result?.result != null) {
-                // TODO check
                 emit(Result.success(result.result.getOrNull(0).toDomainModel()))
             } else {
-                Log.d("Rifqi-test", "response code: ${response.code()}")
                 emit(Result.failure(Exception(result?.error?.description ?: "Unknown error")))
             }
         } catch (e: Exception) {
-
-            Log.d("Rifqi-test", "catch api: $e")
             // 3. Emit error to show error immediately, but don't stop the flow
             emit(Result.failure(e))
         }
@@ -39,13 +35,10 @@ class StockChartRepositoryImpl(private val api: StockChartAPI) : StockChartRepos
             delay(delay)
             return@retryWhen true
         } else {
-            Log.d("Rifqi-test", "retry called")
             emit(Result.failure(cause))
             return@retryWhen false
         }
     }.catch { e ->
-
-        Log.d("Rifqi-test", "catch end flow: $e")
         emit(Result.failure(e))
     }
 }
