@@ -18,6 +18,7 @@ import com.riftar.stockchart.chart.ChartFormatter.dateFormatter
 import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
 import com.riftar.stockchart.chart.CustomMarkerView
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
+import com.riftar.stockchart.search.SearchStockBottomSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -56,6 +57,9 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
 
     private fun showStockData(chartResult: ChartResult) {
         with(binding) {
+            etSearch.setOnClickListener {
+                openSearchBottomSheet()
+            }
             tvStockCode.text = chartResult.meta.symbol
             tvCompanyName.text = chartResult.meta.shortName
             tvRegularPrice.text = chartResult.meta.regularMarketPrice.convertToUSD()
@@ -77,6 +81,12 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         }
     }
 
+    private fun openSearchBottomSheet() {
+        SearchStockBottomSheet.newInstance { stockCode ->
+            viewModel.getStockChartData(stockCode)
+        }.show(supportFragmentManager, "SearchStockBottomSheet")
+    }
+
     private fun showChartData(chartResult: ChartResult) {
 
         val chartData = chartResult.timestamp.mapIndexed { index, i ->
@@ -87,6 +97,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         setupChartLayout(chartResult)
         binding.layoutChart.chart.data = lineData
         binding.layoutChart.chart.notifyDataSetChanged()
+        binding.layoutChart.chart.invalidate()
     }
 
     private fun setupChartLayout(chartResult: ChartResult) {

@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_grey"
+    android:background="@color/background_gray"
     android:orientation="vertical"
     tools:context=".StockChartActivity">
 
@@ -16,17 +16,16 @@
         android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/dialogSearchIlSearch"
+            android:id="@+id/IlSearch"
             style="@style/TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/dialogLocationEtSearch"
+                android:id="@+id/etSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLines="1" />
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
@@ -139,22 +138,22 @@
                         <com.google.android.material.button.MaterialButton
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
+                            android:text="5D" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
                             android:text="1M" />
 
                         <com.google.android.material.button.MaterialButton
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
-                            android:text="3M" />
+                            android:text="6M" />
 
                         <com.google.android.material.button.MaterialButton
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
-                            android:text="1Y" />
-
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.NotSelected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="5Y" />
+                            android:text="YTD" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

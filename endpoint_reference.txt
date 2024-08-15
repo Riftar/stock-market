@@ -1,0 +1,19 @@
+1 day:
+https://query1.finance.yahoo.com/v8/finance/chart/AAPL?region=US&lang=en-US&includePrePost=false&interval=2m&useYfid=true&range=1d&corsDomain=finance.yahoo.com&.tsrc=finance
+
+
+5 day:
+https://query1.finance.yahoo.com/v8/finance/chart/AAPL?region=US&lang=en-US&includePrePost=false&interval=15m&useYfid=true&range=5d&corsDomain=finance.yahoo.com&.tsrc=finance
+
+1 Month:
+https://query1.finance.yahoo.com/v8/finance/chart/AAPL?region=US&lang=en-US&includePrePost=false&interval=1h&useYfid=true&range=1mo&corsDomain=finance.yahoo.com&.tsrc=finance
+
+6 month:
+https://query1.finance.yahoo.com/v8/finance/chart/AAPL?region=US&lang=en-US&includePrePost=false&interval=1d&useYfid=true&range=6mo&corsDomain=finance.yahoo.com&.tsrc=finance
+
+YTD:
+https://query1.finance.yahoo.com/v8/finance/chart/AAPL?region=US&lang=en-US&includePrePost=false&interval=1d&useYfid=true&range=ytd&corsDomain=finance.yahoo.com&.tsrc=finance
+
+Cara hitung gain/loss
+Gain/previous price
+(regularMarketPrice-previousClose)/previousClose
