@@ -38,7 +38,7 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":core:common"))
-
+    implementation (libs.mpandroidchart)
     implementation(libs.koin)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)

@@ -9,5 +9,5 @@ data class ResultResponse(
     @SerializedName("meta")
     val meta: MetaResponse? = null,
     @SerializedName("timestamp")
-    val timestamp: List<Int?>? = null
+    val timestamp: List<Long?>? = null
 )
