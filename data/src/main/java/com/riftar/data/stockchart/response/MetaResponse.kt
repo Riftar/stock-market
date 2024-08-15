@@ -47,7 +47,7 @@ data class MetaResponse(
     @SerializedName("regularMarketTime")
     val regularMarketTime: Int? = null,
     @SerializedName("regularMarketVolume")
-    val regularMarketVolume: Double? = null,
+    val regularMarketVolume: Long? = null,
     @SerializedName("scale")
     val scale: Int? = null,
     @SerializedName("shortName")

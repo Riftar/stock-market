@@ -1,64 +1,97 @@
 package com.riftar.stockchart
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.riftar.common.helper.convertToUSD
+import com.riftar.common.helper.formatNumber
+import com.riftar.common.helper.roundTwoDecimal
+import com.riftar.common.view.base.BaseActivity
 import com.riftar.domain.stockchart.model.ChartResult
+import com.riftar.stockchart.chart.ChartFormatter.dateFormatter
+import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
 import com.riftar.stockchart.chart.CustomMarkerView
+import com.riftar.stockchart.databinding.ActivityStockChartBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 
-class StockChartActivity : AppCompatActivity() {
+class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     private val viewModel: StockChartViewModel by viewModel()
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_stock_chart)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        setContentView(binding.root)
         viewModel.getStockChartData("AAPL")
+    }
+
+    override fun getViewBinding() = ActivityStockChartBinding.inflate(layoutInflater)
+
+    override fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.stockChartState.collect {
                 when (it) {
                     is StockChartState.Error -> {
-
+                        showErrorSnackBar(it.message)
                     }
 
                     StockChartState.Loading -> {
+                        //show loading
                     }
 
                     is StockChartState.Success -> {
-
-                        showData(it.charResult)
+                        showStockData(it.chartResult)
+                        showChartData(it.chartResult)
                     }
                 }
             }
         }
     }
 
-    private fun showData(chartResult: ChartResult?) {
-        val chart = findViewById<LineChart>(R.id.chart)
-        chart.apply {
+    private fun showStockData(chartResult: ChartResult) {
+        with(binding) {
+            tvStockCode.text = chartResult.meta.symbol
+            tvCompanyName.text = chartResult.meta.shortName
+            tvRegularPrice.text = chartResult.meta.regularMarketPrice.convertToUSD()
+            val diff = chartResult.meta.regularMarketPrice - chartResult.meta.previousClose
+            val percentageChange = diff / chartResult.meta.previousClose * 100
+            tvPercentage.text = "${percentageChange.roundTwoDecimal()}% (${diff.convertToUSD()})"
+            val color = if (percentageChange > 0) {
+                com.riftar.common.R.color.green_profit
+            } else com.riftar.common.R.color.red_loss
+            tvPercentage.setTextColor(ContextCompat.getColor(this@StockChartActivity, color))
+
+            tvPrevClose.text = chartResult.meta.previousClose.convertToUSD()
+            tvOpen.text = chartResult.indicators.quote[0].open[0].convertToUSD()
+            tvDayHigh.text = chartResult.meta.regularMarketDayHigh.convertToUSD()
+            tvDayLow.text = chartResult.meta.regularMarketDayLow.convertToUSD()
+            tvVolume.text = chartResult.meta.regularMarketVolume.formatNumber()
+            tv52High.text = chartResult.meta.fiftyTwoWeekHigh.convertToUSD()
+            tv52Low.text = chartResult.meta.fiftyTwoWeekLow.convertToUSD()
+        }
+    }
+
+    private fun showChartData(chartResult: ChartResult) {
+
+        val chartData = chartResult.timestamp.mapIndexed { index, i ->
+            Entry(i.toFloat(), chartResult.indicators.quote[0].close[index].toFloat())
+        }
+
+        val lineData = createLineDataSet(chartData)
+        setupChartLayout(chartResult)
+        binding.layoutChart.chart.data = lineData
+        binding.layoutChart.chart.notifyDataSetChanged()
+    }
+
+    private fun setupChartLayout(chartResult: ChartResult) {
+        val limit = createLimitLine(chartResult.indicators.quote[0].close.last())
+        binding.layoutChart.chart.apply {
             setBackgroundColor(
                 ContextCompat.getColor(
                     this@StockChartActivity,
@@ -72,12 +105,19 @@ class StockChartActivity : AppCompatActivity() {
             setDrawMarkers(false)
             legend.isEnabled = false
             axisLeft.apply {
+                axisMinimum = chartResult.indicators.quote[0].close.min().toFloat()
                 setDrawGridLines(false)
                 textSize = 12f
+                labelCount = 8
                 textColor = ContextCompat.getColor(
                     this@StockChartActivity,
                     com.riftar.common.R.color.text_color_primary
                 )
+                addLimitLine(limit)
+                setDrawLimitLinesBehindData(true)
+                valueFormatter = dollarFormatter
+                spaceMin = 1f
+                setClipValuesToContent(false)
             }
             axisRight.apply {
                 isEnabled = false
@@ -87,22 +127,33 @@ class StockChartActivity : AppCompatActivity() {
                 //disable grid line in background
                 setDrawGridLines(false)
                 position = XAxis.XAxisPosition.BOTTOM
-                valueFormatter = formatterX
-                labelCount = 8
+                valueFormatter = dateFormatter
+                labelCount = 6
                 textSize = 12f
                 textColor = ContextCompat.getColor(
                     this@StockChartActivity,
                     com.riftar.common.R.color.text_color_primary
                 )
             }
+            extraBottomOffset = 4f
             setDrawMarkers(true)
             marker = CustomMarkerView(this@StockChartActivity, R.layout.layout_marker_view)
         }
+    }
 
-        val chartData = chartResult?.timestamp?.mapIndexed { index, i ->
-            Entry(i.toFloat(), chartResult.indicators.quote[0].close[index].toFloat())
+    private fun createLimitLine(last: Double): LimitLine {
+        val limit = LimitLine(last.toFloat(), "")
+        return limit.apply {
+            lineWidth = 2f
+            lineColor = ContextCompat.getColor(
+                this@StockChartActivity,
+                com.riftar.common.R.color.text_color_gray
+            )
+            enableDashedLine(10f, 10f, 0f)
         }
+    }
 
+    private fun createLineDataSet(chartData: List<Entry>): LineData {
         val lineDataSet = LineDataSet(chartData, "")
         lineDataSet.apply {
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
@@ -124,24 +175,6 @@ class StockChartActivity : AppCompatActivity() {
             )
         }
 
-        val lineData = LineData(lineDataSet)
-
-        chart.data = lineData
-        chart.notifyDataSetChanged()
-    }
-
-
-    fun Float.formatFloatToHours(format: String = "HH:mm"): String {
-        return SimpleDateFormat(format, Locale("id", "ID")).format(this)
-    }
-
-    fun Float.formatFloatToDate(format: String = "MMM dd"): String {
-        return SimpleDateFormat(format, Locale("id", "ID")).format(this)
-    }
-
-    private val formatterX = object : IndexAxisValueFormatter() {
-        override fun getFormattedValue(value: Float): String {
-            return value.formatFloatToHours()
-        }
+        return LineData(lineDataSet)
     }
 }
