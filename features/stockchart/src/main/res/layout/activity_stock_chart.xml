@@ -5,55 +5,70 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white_smoke_white"
+    android:background="@color/background_grey"
     android:orientation="vertical"
     tools:context=".StockChartActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:layout_height="wrap_content"
+        android:background="@color/background_solid"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialogSearchIlSearch"
+            style="@style/TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialogLocationEtSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="16dp"
-                app:layout_constraintTop_toTopOf="parent">
+                android:background="@drawable/bg_rounded_corner_bottom_16dp"
+                android:padding="16dp">
 
                 <ImageView
                     android:id="@+id/ivLogo"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@android:color/black"
+                    android:src="@drawable/ic_company_logo"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tvStockCode"
+                    style="@style/Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="8dp"
                     android:text="AAPL"
                     app:layout_constraintStart_toEndOf="@id/ivLogo"
                     app:layout_constraintTop_toTopOf="@id/ivLogo" />
 
                 <TextView
+                    style="@style/Body.Gray"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginHorizontal="8dp"
                     android:text="Apple Inc."
                     app:layout_constraintBottom_toBottomOf="@id/ivLogo"
                     app:layout_constraintStart_toEndOf="@id/ivLogo"
@@ -61,6 +76,7 @@
 
                 <TextView
                     android:id="@+id/tvRegularPrice"
+                    style="@style/Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -71,12 +87,13 @@
 
                 <TextView
                     android:id="@+id/tvPercentage"
+                    style="@style/Body.Green"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:gravity="end"
                     android:text="$0.092"
-                    android:textColor="@color/green_green"
+                    android:textColor="@color/green_profit"
                     app:layout_constraintBottom_toBottomOf="@id/ivLogo"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvStockCode" />
@@ -89,14 +106,71 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="8dp"
                 android:elevation="8dp"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintTop_toBottomOf="@id/layoutHeader">
+                app:cardCornerRadius="16dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layoutMarket"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@color/background_solid"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <include
+                        android:id="@+id/layoutChart"
+                        layout="@layout/layout_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutButtonPeriod"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/bg_button_period"
+                        android:orientation="horizontal"
+                        android:padding="4dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.Selected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="1D" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="1M" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="3M" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="1Y" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="5Y" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="8dp"
+                android:elevation="8dp"
+                app:cardCornerRadius="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/background_solid"
                     android:padding="16dp">
 
                     <androidx.constraintlayout.widget.Guideline
@@ -108,147 +182,144 @@
 
                     <TextView
                         android:id="@+id/tvTitleOpen"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:text="Open"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvTitleHigh"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="8dp"
                         android:text="High"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvOpen"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvTitleLow"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="8dp"
                         android:text="Low"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvHigh"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvOpen"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
-                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleOpen"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleOpen"
                         tools:ignore="DuplicateIds"
                         tools:text="$143.00" />
 
                     <TextView
                         android:id="@+id/tvHigh"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
-                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleHigh"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleHigh"
                         tools:ignore="DuplicateIds"
                         tools:text="$176.00" />
 
                     <TextView
                         android:id="@+id/tvLow"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
-                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleLow"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleLow"
                         tools:ignore="DuplicateIds"
                         tools:text="$151.00" />
 
-                    <View
-                        android:layout_width="2dp"
-                        android:layout_height="0dp"
-                        android:background="@color/white_smoke_white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <!--   Right Side of Guideline-->
                     <TextView
                         android:id="@+id/tvTitleMarketCap"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="8dp"
                         android:text="MKT CAP"
-                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
-                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvLow"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvTitleVolume"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="8dp"
                         android:text="VOL"
-                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvMarketCap"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvTitleAvgVolume"
+                        style="@style/Body.Gray"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:layout_marginTop="8dp"
                         android:text="AVG VOL"
-                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tvVolume"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvMarketCap"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
                         android:text="$27.1T"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleMarketCap"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleMarketCap"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvVolume"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
                         android:text="51.15M"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleVolume"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleVolume"
                         tools:ignore="DuplicateIds" />
 
                     <TextView
                         android:id="@+id/tvAvgVolume"
+                        style="@style/Body.Bold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="16dp"
                         android:gravity="end"
                         android:text="42.12M"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/tvTitleAvgVolume"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
                         app:layout_constraintTop_toTopOf="@id/tvTitleAvgVolume"
                         tools:ignore="DuplicateIds" />
 
@@ -258,107 +329,8 @@
                         android:layout_height="wrap_content"
                         app:barrierDirection="bottom"
                         app:constraint_referenced_ids="tvAvgVolume, tvLow" />
-
-
-                    <!-- TODO extract to different layout-->
-
-                    <!--                    <View-->
-                    <!--                        android:id="@+id/layoutChart"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="120dp"-->
-                    <!--                        android:layout_marginTop="24dp"-->
-                    <!--                        android:background="@color/observatory_green"-->
-                    <!--                        app:layout_constraintTop_toBottomOf="@+id/barrierMarket" />-->
-
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:id="@+id/toggleButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintTop_toBottomOf="@id/barrierMarket"
-                        app:selectionRequired="true"
-                        app:singleSelection="true">
-
-                        <Button
-                            android:id="@+id/button1"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1D" />
-
-                        <Button
-                            android:id="@+id/button2"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1W" />
-
-                        <Button
-                            android:id="@+id/button3"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1M" />
-
-                        <Button
-                            android:id="@+id/button4"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1Y" />
-
-                        <Button
-                            android:id="@+id/button5"
-                            style="?attr/materialButtonOutlinedStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3Y" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cvMarket">
-
-
-                <include
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/layoutChart"
-                    layout="@layout/layout_chart"
-                    app:layout_constraintTop_toBottomOf="@id/barrierMarket" />
-
-                <EditText
-                    android:id="@+id/etInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/btnSearch"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="8dp"
-                    android:text="search"
-                    app:layout_constraintTop_toBottomOf="@id/etInput" />
-
-                <TextView
-                    android:id="@+id/tvResult"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="Result"
-                    app:layout_constraintTop_toBottomOf="@id/btnSearch" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>
