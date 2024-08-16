@@ -27,8 +27,9 @@ class SearchStockRepositoryImpl(private val dao: SearchHistoryDao) : SearchStock
     }
 
     override fun saveCurrentSearchToHistory(stockHistory: StockHistory): Flow<Result<Unit>> = flow {
-        val result = dao.insertAll(stockHistory.toEntityModel()) // return the affected row
-        if (result > 0) {
+        val entityModel = stockHistory.toEntityModel()
+        val retrievedEntity = dao.insertAndGetSearchHistoryById(entityModel)
+        if (retrievedEntity != null && retrievedEntity == entityModel) {
             emit(Result.success(Unit))
         } else {
             emit(Result.failure(Exception("Failed to save search history")))

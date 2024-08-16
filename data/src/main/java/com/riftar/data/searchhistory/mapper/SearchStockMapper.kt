@@ -15,7 +15,7 @@ fun SearchHistoryEntity.toDomainModel() = StockHistory(
 fun StockHistory.toEntityModel() = SearchHistoryEntity(
     symbol = this.symbol,
     shortName = this.shortName,
-    searchTimeMillis = System.currentTimeMillis(),
-    close = this.close.orZero(),
+    searchTimeMillis = this.searchTimeMillis,
+    close = this.close,
     percentageChange = this.percentageChange
 )

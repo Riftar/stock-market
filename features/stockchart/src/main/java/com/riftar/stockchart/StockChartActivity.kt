@@ -21,8 +21,6 @@ import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
 import com.riftar.stockchart.chart.CustomMarkerView
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
 import com.riftar.stockchart.search.SearchStockBottomSheet
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -33,7 +31,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        viewModel.getStockChartData("AAPL")
+        viewModel.getStockChartData("AAPL", System.currentTimeMillis())
     }
 
     override fun getViewBinding() = ActivityStockChartBinding.inflate(layoutInflater)
@@ -59,10 +57,11 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         }
         lifecycleScope.launch {
             viewModel.saveHistoryState.collect {
-                when(it) {
+                when (it) {
                     is SaveStockHistoryState.Error -> {
                         showErrorSnackBar(it.message)
                     }
+
                     SaveStockHistoryState.Initial -> {}
                     SaveStockHistoryState.Success -> {
                         // todo delete
@@ -83,7 +82,9 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             tvRegularPrice.text = chartResult.meta.regularMarketPrice.convertToUSD()
             val diff = chartResult.meta.regularMarketPrice - chartResult.meta.previousClose
             val percentageChange = diff / chartResult.meta.previousClose * 100
-            tvPercentage.text ="${chartResult.calculatePercentageChange().roundTwoDecimal()}% (${chartResult.calculateGainOrLoss().convertToUSD()})"
+            tvPercentage.text = "${
+                chartResult.calculatePercentageChange().roundTwoDecimal()
+            }% (${chartResult.calculateGainOrLoss().convertToUSD()})"
             val color = if (percentageChange > 0) {
                 com.riftar.common.R.color.green_profit
             } else com.riftar.common.R.color.red_loss
@@ -101,7 +102,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
 
     private fun openSearchBottomSheet() {
         SearchStockBottomSheet.newInstance { stockCode ->
-            viewModel.getStockChartData(stockCode)
+            viewModel.getStockChartData(stockCode, System.currentTimeMillis())
         }.show(supportFragmentManager, "SearchStockBottomSheet")
     }
 

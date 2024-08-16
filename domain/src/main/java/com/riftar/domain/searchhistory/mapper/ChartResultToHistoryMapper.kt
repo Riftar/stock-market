@@ -4,10 +4,10 @@ import com.riftar.domain.searchhistory.model.StockHistory
 import com.riftar.domain.stockchart.model.ChartResult
 
 
-fun ChartResult.toStockHistory() = StockHistory(
+fun ChartResult.toStockHistory(searchTimeMillis: Long) = StockHistory(
     symbol = this.meta.symbol,
     shortName = this.meta.shortName,
-    searchTimeMillis = 0,
+    searchTimeMillis = searchTimeMillis,
     close = this.indicators.quote.getOrNull(0)?.close?.lastOrNull() ?: 0.0,
     percentageChange = this.calculatePercentageChange()
 )

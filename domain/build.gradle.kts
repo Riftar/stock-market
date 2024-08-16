@@ -50,6 +50,18 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // to use any() at [SaveCurrentSearchToHistoryUseCase]
+    // ref: https://stackoverflow.com/a/63350254/14623286
+    testImplementation(libs.mockito.kotlin)
+
+}
+
+tasks.register("domainTest") {
+    group = "verification"
+    description = "Runs tests for the domain module"
+
+    dependsOn(":domain:test")
 }

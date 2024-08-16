@@ -16,17 +16,18 @@ class StockChartViewModel(
 ) : ViewModel() {
     private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Loading)
     val stockChartState: StateFlow<StockChartState> = _stockChartState.asStateFlow()
-    private val _saveHistoryState = MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
+    private val _saveHistoryState =
+        MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
     val saveHistoryState: StateFlow<SaveStockHistoryState> = _saveHistoryState.asStateFlow()
 
-    fun getStockChartData(stockCode: String) {
+    fun getStockChartData(stockCode: String, searchTimeMillis: Long) {
         viewModelScope.launch {
             _stockChartState.value = StockChartState.Loading
             getStockChartUseCase.invoke(stockCode)
                 .collect { result ->
                     result.onSuccess { data ->
                         _stockChartState.value = StockChartState.Success(data)
-                        saveCurrentSearchToHistory(data)
+                        saveCurrentSearchToHistory(data, searchTimeMillis)
                     }.onFailure { exception ->
                         _stockChartState.value =
                             StockChartState.Error(exception.message ?: "Unknown error occurred")
@@ -35,14 +36,15 @@ class StockChartViewModel(
         }
     }
 
-    private fun saveCurrentSearchToHistory(chartResult: ChartResult) {
+    private fun saveCurrentSearchToHistory(chartResult: ChartResult, searchTimeMillis: Long) {
         viewModelScope.launch {
-            saveCurrentSearchToHistoryUseCase.invoke(chartResult)
+            saveCurrentSearchToHistoryUseCase.invoke(chartResult, searchTimeMillis)
                 .collect { result ->
                     result.onSuccess {
                         _saveHistoryState.value = SaveStockHistoryState.Success
                     }.onFailure {
-                        _saveHistoryState.value = SaveStockHistoryState.Error(it.message ?: "Unknown error occurred")
+                        _saveHistoryState.value =
+                            SaveStockHistoryState.Error(it.message ?: "Unknown error occurred")
                     }
                 }
         }

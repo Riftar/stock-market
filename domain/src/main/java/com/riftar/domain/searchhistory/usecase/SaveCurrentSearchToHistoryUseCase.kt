@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SaveCurrentSearchToHistoryUseCase(private val repository: SearchStockRepository) {
-    operator fun invoke(chartResult: ChartResult): Flow<Result<Unit>> = flow {
+    operator fun invoke(chartResult: ChartResult, searchTimeMillis: Long): Flow<Result<Unit>> = flow {
         try {
-            val stockHistory = chartResult.toStockHistory()
+            val stockHistory = chartResult.toStockHistory(searchTimeMillis)
             repository.saveCurrentSearchToHistory(stockHistory).collect { result ->
                 emit(result)
             }
