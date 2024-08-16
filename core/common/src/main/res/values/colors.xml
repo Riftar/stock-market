@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="green_profit">#51927a</color>
+    <color name="red_loss">#cf625b</color>
+    <color name="yellow">#f0bf61</color>
+    <color name="text_color_primary">#FF000000</color>
+    <color name="background_solid">#FFFFFFFF</color>
+    <color name="background_gray">#F5F5F5</color>
+    <color name="background_invert_gray">#262626</color>
+    <color name="text_color_gray">#8e8e8e</color>
+    <color name="transparent">#00000000</color>
+
+</resources>

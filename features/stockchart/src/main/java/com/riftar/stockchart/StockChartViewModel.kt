@@ -31,6 +31,6 @@ class StockChartViewModel(private val getStockChartUseCase: GetStockChartUseCase
 
 sealed class StockChartState {
     data object Loading : StockChartState()
-    data class Success(val charResult: ChartResult) : StockChartState()
+    data class Success(val chartResult: ChartResult) : StockChartState()
     data class Error(val message: String) : StockChartState()
 }

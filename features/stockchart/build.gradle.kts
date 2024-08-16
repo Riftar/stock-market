@@ -30,12 +30,15 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation(project(":domain"))
     implementation(project(":core:common"))
-
+    implementation (libs.mpandroidchart)
     implementation(libs.koin)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)

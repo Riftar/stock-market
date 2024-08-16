@@ -17,7 +17,7 @@ data class Meta(
     val fiftyTwoWeekLow: Double,
     val regularMarketDayHigh: Double,
     val regularMarketDayLow: Double,
-    val regularMarketVolume: Double,
+    val regularMarketVolume: Long,
     val longName: String,
     val shortName: String,
     val chartPreviousClose: Double,

@@ -1,34 +1,342 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_gray"
+    android:orientation="vertical"
     tools:context=".StockChartActivity">
 
-    <EditText
-        android:id="@+id/etInput"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/background_solid"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnSearch"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/IlSearch"
+            style="@style/TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="search"
-        android:layout_marginVertical="8dp"
-        app:layout_constraintTop_toBottomOf="@id/etInput" />
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Result"
-        app:layout_constraintTop_toBottomOf="@id/btnSearch" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_rounded_corner_bottom_16dp"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/ivLogo"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_company_logo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvStockCode"
+                    style="@style/Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintStart_toEndOf="@id/ivLogo"
+                    app:layout_constraintTop_toTopOf="@id/ivLogo"
+                    tools:text="AAPL" />
+
+                <TextView
+                    android:id="@+id/tvCompanyName"
+                    style="@style/Body.Gray"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    app:layout_constraintBottom_toBottomOf="@id/ivLogo"
+                    app:layout_constraintStart_toEndOf="@id/ivLogo"
+                    app:layout_constraintTop_toBottomOf="@id/tvStockCode"
+                    tools:text="Apple Inc." />
+
+                <TextView
+                    android:id="@+id/tvRegularPrice"
+                    style="@style/Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/ivLogo"
+                    tools:text="$192.0" />
+
+                <TextView
+                    android:id="@+id/tvPercentage"
+                    style="@style/Body.Green"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:gravity="end"
+                    android:textColor="@color/green_profit"
+                    app:layout_constraintBottom_toBottomOf="@id/ivLogo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvStockCode"
+                    tools:text="$0.092" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvMarket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="8dp"
+                android:elevation="8dp"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/background_solid"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <include
+                        android:id="@+id/layoutChart"
+                        layout="@layout/layout_chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutButtonPeriod"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/bg_button_period"
+                        android:orientation="horizontal"
+                        android:padding="4dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.Selected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="1D" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="5D" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="1M" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="6M" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/Button.Period.NotSelected"
+                            android:layout_marginHorizontal="4dp"
+                            android:text="YTD" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="8dp"
+                android:elevation="8dp"
+                app:cardCornerRadius="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/background_solid"
+                    android:padding="16dp">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guidelineVerticalMid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.5" />
+
+                    <TextView
+                        android:id="@+id/tvTitlePrevClose"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_previous_close"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvTitleOpen"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_open"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvPrevClose" />
+
+                    <TextView
+                        android:id="@+id/tvTitleDayHigh"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_day_high"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvOpen" />
+
+                    <TextView
+                        android:id="@+id/tvTitleDayLow"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_day_low"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvDayHigh" />
+
+                    <TextView
+                        android:id="@+id/tvTitleVolume"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_volume"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvDayLow" />
+
+                    <TextView
+                        android:id="@+id/tvTitle52High"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_52_week_high"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tvVolume" />
+
+                    <TextView
+                        android:id="@+id/tvTitle52Low"
+                        style="@style/Body.Gray"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/title_52_week_low"
+                        app:layout_constraintEnd_toStartOf="@id/guidelineVerticalMid"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv52High" />
+
+
+                    <!-- Region values-->
+                    <TextView
+                        android:id="@+id/tvPrevClose"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitlePrevClose"
+                        tools:text="$143.00" />
+
+                    <TextView
+                        android:id="@+id/tvOpen"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitleOpen"
+                        tools:text="$143.00" />
+
+                    <TextView
+                        android:id="@+id/tvDayHigh"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitleDayHigh"
+                        tools:text="$176.00" />
+
+
+                    <TextView
+                        android:id="@+id/tvDayLow"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitleDayLow"
+                        tools:text="$151.00" />
+
+                    <TextView
+                        android:id="@+id/tvVolume"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitleVolume"
+                        tools:text="$27.1T" />
+
+                    <TextView
+                        android:id="@+id/tv52High"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitle52High"
+                        tools:text="51.15M" />
+
+                    <TextView
+                        android:id="@+id/tv52Low"
+                        style="@style/Body.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/guidelineVerticalMid"
+                        app:layout_constraintTop_toTopOf="@id/tvTitle52Low"
+                        tools:text="$176.00" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

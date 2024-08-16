@@ -1,1 +1,9 @@
-<resources></resources>
+<resources>
+    <string name="title_volume">Volume</string>
+    <string name="title_52_week_high">52 Week High</string>
+    <string name="title_52_week_low">52 Week Low</string>
+    <string name="title_day_low">Day\'s Low</string>
+    <string name="title_day_high">Day\'s High</string>
+    <string name="title_open">Open</string>
+    <string name="title_previous_close">Previous Close</string>
+</resources>
