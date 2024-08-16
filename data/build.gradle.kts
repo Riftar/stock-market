@@ -47,6 +47,8 @@ dependencies {
     api(libs.koin)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.paging)
+    implementation(libs.paging.runtime)
     implementation(libs.okHttpLoggingInterceptor)
     implementation(libs.retrofit.gson.converter)
     implementation(libs.androidx.core.ktx)

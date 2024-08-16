@@ -7,9 +7,12 @@ import com.riftar.data.searchhistory.room.entity.SearchHistoryEntity.Companion.S
 
 @Entity(tableName = SEARCH_HISTORY_TABLE)
 data class SearchHistoryEntity(
-    @PrimaryKey
-    val id: Int,
-    val query: String
+    @PrimaryKey(autoGenerate = false)
+    val symbol: String,
+    val shortName: String?,
+    val searchTimeMillis: Long?,
+    val close: Double?,
+    val percentageChange: Double?
 ) {
     companion object {
         const val SEARCH_HISTORY_TABLE = "search_history"

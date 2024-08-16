@@ -6,23 +6,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.map
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import com.riftar.common.databinding.LayoutSnackbarBinding
 import com.riftar.common.view.ViewConstants
-import com.riftar.stockchart.StockChartViewModel
 import com.riftar.stockchart.databinding.LayoutSearchBottomSheetBinding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchStockBottomSheet : BottomSheetDialogFragment() {
     private var onStockSelected: (String) -> Unit = {}
     private lateinit var binding: LayoutSearchBottomSheetBinding
-    private val viewModel: StockChartViewModel by viewModel()
+    private val viewModel: SearchStockViewModel by viewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,8 +59,9 @@ class SearchStockBottomSheet : BottomSheetDialogFragment() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
+            viewModel.getSearchHistory().collectLatest {
 
-
+            }
         }
     }
 
@@ -73,6 +77,9 @@ class SearchStockBottomSheet : BottomSheetDialogFragment() {
 
     private fun setViewListener() {
         with(binding) {
+            etSearch.doAfterTextChanged { text ->
+                viewModel.setSearchQuery(text.toString())
+            }
             ivBack.setOnClickListener {
                 dismiss()
             }

@@ -13,12 +13,16 @@ import com.riftar.common.helper.convertToUSD
 import com.riftar.common.helper.formatNumber
 import com.riftar.common.helper.roundTwoDecimal
 import com.riftar.common.view.base.BaseActivity
+import com.riftar.domain.searchhistory.mapper.calculateGainOrLoss
+import com.riftar.domain.searchhistory.mapper.calculatePercentageChange
 import com.riftar.domain.stockchart.model.ChartResult
 import com.riftar.stockchart.chart.ChartFormatter.dateFormatter
 import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
 import com.riftar.stockchart.chart.CustomMarkerView
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
 import com.riftar.stockchart.search.SearchStockBottomSheet
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -53,6 +57,20 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
                 }
             }
         }
+        lifecycleScope.launch {
+            viewModel.saveHistoryState.collect {
+                when(it) {
+                    is SaveStockHistoryState.Error -> {
+                        showErrorSnackBar(it.message)
+                    }
+                    SaveStockHistoryState.Initial -> {}
+                    SaveStockHistoryState.Success -> {
+                        // todo delete
+                        showSuccessSnackBar("Success insert to History")
+                    }
+                }
+            }
+        }
     }
 
     private fun showStockData(chartResult: ChartResult) {
@@ -65,7 +83,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             tvRegularPrice.text = chartResult.meta.regularMarketPrice.convertToUSD()
             val diff = chartResult.meta.regularMarketPrice - chartResult.meta.previousClose
             val percentageChange = diff / chartResult.meta.previousClose * 100
-            tvPercentage.text = "${percentageChange.roundTwoDecimal()}% (${diff.convertToUSD()})"
+            tvPercentage.text ="${chartResult.calculatePercentageChange().roundTwoDecimal()}% (${chartResult.calculateGainOrLoss().convertToUSD()})"
             val color = if (percentageChange > 0) {
                 com.riftar.common.R.color.green_profit
             } else com.riftar.common.R.color.red_loss

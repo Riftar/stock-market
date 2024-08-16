@@ -38,6 +38,8 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":core:common"))
+
+    implementation (libs.paging.runtime)
     implementation (libs.mpandroidchart)
     implementation(libs.koin)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
