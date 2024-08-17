@@ -9,4 +9,5 @@ val viewModule = module {
 
     viewModel { StockChartViewModel(get(), get()) }
     viewModel { SearchStockViewModel(get()) }
+    viewModel { com.riftar.searchstock.SearchStockViewModel(get()) }
 }

@@ -1,6 +1,9 @@
 package com.riftar.stockchart
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -11,7 +14,11 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.riftar.common.helper.convertToUSD
 import com.riftar.common.helper.formatNumber
+import com.riftar.common.helper.getPercentageColor
+import com.riftar.common.helper.orZero
 import com.riftar.common.helper.roundTwoDecimal
+import com.riftar.common.view.NavigationConstants.SEARCH_STOCK_ACTIVITY
+import com.riftar.common.view.NavigationConstants.SELECTED_STOCK_INTENT
 import com.riftar.common.view.base.BaseActivity
 import com.riftar.domain.searchhistory.mapper.calculateGainOrLoss
 import com.riftar.domain.searchhistory.mapper.calculatePercentageChange
@@ -27,14 +34,29 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     private val viewModel: StockChartViewModel by viewModel()
+    private val searchStockLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                onResultReceived(intent)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        viewModel.getStockChartData("AAPL", System.currentTimeMillis())
+//        viewModel.getStockChartData("AAPL", System.currentTimeMillis())
     }
 
     override fun getViewBinding() = ActivityStockChartBinding.inflate(layoutInflater)
+
+    override fun initViewListener() {
+        with(binding) {
+            etSearch.setOnClickListener {
+                navigateToSearchActivity()
+            }
+        }
+    }
 
     override fun observeViewModel() {
         lifecycleScope.launch {
@@ -72,32 +94,43 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         }
     }
 
+    private fun onResultReceived(intent: Intent?) {
+        intent?.getStringExtra(SELECTED_STOCK_INTENT)?.let {
+            viewModel.getStockChartData(it, System.currentTimeMillis())
+        }
+    }
+
     private fun showStockData(chartResult: ChartResult) {
         with(binding) {
-            etSearch.setOnClickListener {
-                openSearchBottomSheet()
-            }
             tvStockCode.text = chartResult.meta.symbol
             tvCompanyName.text = chartResult.meta.shortName
             tvRegularPrice.text = chartResult.meta.regularMarketPrice.convertToUSD()
-            val diff = chartResult.meta.regularMarketPrice - chartResult.meta.previousClose
-            val percentageChange = diff / chartResult.meta.previousClose * 100
             tvPercentage.text = "${
                 chartResult.calculatePercentageChange().roundTwoDecimal()
             }% (${chartResult.calculateGainOrLoss().convertToUSD()})"
-            val color = if (percentageChange > 0) {
-                com.riftar.common.R.color.green_profit
-            } else com.riftar.common.R.color.red_loss
+            val color = getPercentageColor(
+                chartResult.meta.regularMarketPrice,
+                chartResult.meta.previousClose
+            )
             tvPercentage.setTextColor(ContextCompat.getColor(this@StockChartActivity, color))
 
             tvPrevClose.text = chartResult.meta.previousClose.convertToUSD()
-            tvOpen.text = chartResult.indicators.quote[0].open[0].convertToUSD()
+            tvOpen.text =
+                chartResult.indicators.quote.getOrNull(0)?.open?.getOrNull(0).convertToUSD()
             tvDayHigh.text = chartResult.meta.regularMarketDayHigh.convertToUSD()
             tvDayLow.text = chartResult.meta.regularMarketDayLow.convertToUSD()
             tvVolume.text = chartResult.meta.regularMarketVolume.formatNumber()
             tv52High.text = chartResult.meta.fiftyTwoWeekHigh.convertToUSD()
             tv52Low.text = chartResult.meta.fiftyTwoWeekLow.convertToUSD()
         }
+    }
+
+    private fun navigateToSearchActivity() {
+        val intent = Intent(
+            this@StockChartActivity,
+            Class.forName(SEARCH_STOCK_ACTIVITY)
+        )
+        searchStockLauncher.launch(intent)
     }
 
     private fun openSearchBottomSheet() {
@@ -109,7 +142,10 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     private fun showChartData(chartResult: ChartResult) {
 
         val chartData = chartResult.timestamp.mapIndexed { index, i ->
-            Entry(i.toFloat(), chartResult.indicators.quote[0].close[index].toFloat())
+            Entry(
+                i.toFloat(),
+                chartResult.indicators.quote.getOrNull(0)?.close?.getOrNull(0).orZero().toFloat()
+            )
         }
 
         val lineData = createLineDataSet(chartData)
@@ -120,7 +156,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     }
 
     private fun setupChartLayout(chartResult: ChartResult) {
-        val limit = createLimitLine(chartResult.indicators.quote[0].close.last())
+        val limit = createLimitLine(chartResult.indicators.quote.getOrNull(0)?.close?.last())
         binding.layoutChart.chart.apply {
             setBackgroundColor(
                 ContextCompat.getColor(
@@ -135,7 +171,8 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             setDrawMarkers(false)
             legend.isEnabled = false
             axisLeft.apply {
-                axisMinimum = chartResult.indicators.quote[0].close.min().toFloat()
+                axisMinimum = chartResult.indicators.quote.getOrNull(0)?.close?.min()
+                    .orZero().toFloat()
                 setDrawGridLines(false)
                 textSize = 12f
                 labelCount = 8
@@ -171,8 +208,8 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         }
     }
 
-    private fun createLimitLine(last: Double): LimitLine {
-        val limit = LimitLine(last.toFloat(), "")
+    private fun createLimitLine(last: Double?): LimitLine {
+        val limit = LimitLine(last.orZero().toFloat(), "")
         return limit.apply {
             lineWidth = 2f
             lineColor = ContextCompat.getColor(

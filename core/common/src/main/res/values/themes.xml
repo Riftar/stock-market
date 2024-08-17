@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.StockMarket" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -11,7 +12,7 @@
         <item name="colorOnSecondary">@color/text_color_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/background_solid</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

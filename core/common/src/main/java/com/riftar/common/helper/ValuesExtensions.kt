@@ -42,3 +42,12 @@ fun Long.unixTimestampToDate(): String {
     val dateFormatted = sdf.format(date)
     return dateFormatted
 }
+
+fun getPercentageColor(price: Double, previousClose: Double): Int {
+    val diff = price - previousClose
+    return if (diff < 0) {
+        com.riftar.common.R.color.red_loss
+    } else {
+        com.riftar.common.R.color.green_profit
+    }
+}

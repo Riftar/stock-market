@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_retry">Retry</string>
+    <string name="action_search">Search</string>
+    <string name="title_recent_search">Recent Search</string>
+    <string name="template_msg_empty">Couldn\'t find %s in history.</string>
+    <string name="description_empty">Press search and see the result!</string>
+</resources>
