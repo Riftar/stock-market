@@ -3,15 +3,11 @@ package com.riftar.stockchart
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.github.mikephil.charting.components.LimitLine
-import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.riftar.common.helper.convertToUSD
 import com.riftar.common.helper.formatNumber
 import com.riftar.common.helper.getPercentageColor
@@ -23,9 +19,8 @@ import com.riftar.common.view.base.BaseActivity
 import com.riftar.domain.searchhistory.mapper.calculateGainOrLoss
 import com.riftar.domain.searchhistory.mapper.calculatePercentageChange
 import com.riftar.domain.stockchart.model.ChartResult
-import com.riftar.stockchart.chart.ChartFormatter.dateFormatter
-import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
-import com.riftar.stockchart.chart.CustomMarkerView
+import com.riftar.stockchart.chart.ChartHelper.createLineDataSet
+import com.riftar.stockchart.chart.ChartHelper.setupChartLayout
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,15 +55,21 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         lifecycleScope.launch {
             viewModel.stockChartState.collect {
                 when (it) {
+                    StockChartState.Initial -> {
+                        showInitialLayout()
+                    }
+
                     is StockChartState.Error -> {
+                        binding.layoutLoading.root.visibility = View.GONE
                         showErrorSnackBar(it.message)
                     }
 
                     StockChartState.Loading -> {
-                        //show loading
+                        binding.layoutLoading.root.visibility = View.VISIBLE
                     }
 
                     is StockChartState.Success -> {
+                        showSuccessLayout()
                         showStockData(it.chartResult)
                         showChartData(it.chartResult)
                     }
@@ -85,6 +86,22 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
                     SaveStockHistoryState.Initial -> {}
                 }
             }
+        }
+    }
+
+    private fun showSuccessLayout() {
+        with(binding) {
+            layoutStarter.root.visibility = View.GONE
+            svMain.visibility = View.VISIBLE
+            layoutLoading.root.visibility = View.GONE
+        }
+    }
+
+    private fun showInitialLayout() {
+        with(binding) {
+            layoutStarter.root.visibility = View.VISIBLE
+            svMain.visibility = View.GONE
+            layoutLoading.root.visibility = View.GONE
         }
     }
 
@@ -136,100 +153,12 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             )
         }
 
-        val lineData = createLineDataSet(chartData)
-        setupChartLayout(chartResult)
-        binding.layoutChart.chart.data = lineData
-        binding.layoutChart.chart.notifyDataSetChanged()
-        binding.layoutChart.chart.invalidate()
-    }
-
-    private fun setupChartLayout(chartResult: ChartResult) {
-        val limit = createLimitLine(chartResult.indicators.quote.getOrNull(0)?.close?.last())
-        binding.layoutChart.chart.apply {
-            setBackgroundColor(
-                ContextCompat.getColor(
-                    this@StockChartActivity,
-                    com.riftar.common.R.color.background_solid
-                )
-            )
-            description.isEnabled = false
-            isDragEnabled = true
-            setScaleEnabled(true)
-            setPinchZoom(true)
-            setDrawMarkers(false)
-            legend.isEnabled = false
-            axisLeft.apply {
-                axisMinimum = chartResult.indicators.quote.getOrNull(0)?.close?.min()
-                    .orZero().toFloat()
-                setDrawGridLines(false)
-                textSize = 12f
-                labelCount = 8
-                textColor = ContextCompat.getColor(
-                    this@StockChartActivity,
-                    com.riftar.common.R.color.text_color_primary
-                )
-                addLimitLine(limit)
-                setDrawLimitLinesBehindData(true)
-                valueFormatter = dollarFormatter
-                spaceMin = 1f
-                setClipValuesToContent(false)
-            }
-            axisRight.apply {
-                isEnabled = false
-                setDrawGridLines(false)
-            }
-            xAxis.apply {
-                //disable grid line in background
-                setDrawGridLines(false)
-                position = XAxis.XAxisPosition.BOTTOM
-                valueFormatter = dateFormatter
-                labelCount = 6
-                textSize = 12f
-                textColor = ContextCompat.getColor(
-                    this@StockChartActivity,
-                    com.riftar.common.R.color.text_color_primary
-                )
-            }
-            extraBottomOffset = 4f
-            setDrawMarkers(true)
-            marker = CustomMarkerView(this@StockChartActivity, R.layout.layout_marker_view)
+        with(binding.layoutChart) {
+            val lineData = createLineDataSet(this@StockChartActivity, chartData)
+            chart.setupChartLayout(chartResult)
+            chart.data = lineData
+            chart.notifyDataSetChanged()
+            chart.invalidate()
         }
-    }
-
-    private fun createLimitLine(last: Double?): LimitLine {
-        val limit = LimitLine(last.orZero().toFloat(), "")
-        return limit.apply {
-            lineWidth = 2f
-            lineColor = ContextCompat.getColor(
-                this@StockChartActivity,
-                com.riftar.common.R.color.text_color_gray
-            )
-            enableDashedLine(10f, 10f, 0f)
-        }
-    }
-
-    private fun createLineDataSet(chartData: List<Entry>): LineData {
-        val lineDataSet = LineDataSet(chartData, "")
-        lineDataSet.apply {
-            mode = LineDataSet.Mode.HORIZONTAL_BEZIER
-            color = ContextCompat.getColor(
-                this@StockChartActivity,
-                com.riftar.common.R.color.green_profit
-            )
-            highLightColor = ContextCompat.getColor(
-                this@StockChartActivity,
-                com.riftar.common.R.color.background_invert_gray
-            )
-            setDrawValues(false)
-            setDrawCircles(false)
-            lineWidth = 2f
-            setDrawFilled(true)
-            fillDrawable = AppCompatResources.getDrawable(
-                this@StockChartActivity,
-                R.drawable.bg_chart_green_gradient
-            )
-        }
-
-        return LineData(lineDataSet)
     }
 }

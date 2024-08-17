@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":core:common"))
 
+    implementation(libs.shimmer)
     implementation (libs.paging.runtime)
     implementation (libs.mpandroidchart)
     implementation(libs.koin)

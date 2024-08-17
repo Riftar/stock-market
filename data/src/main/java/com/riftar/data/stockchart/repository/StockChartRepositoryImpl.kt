@@ -21,7 +21,10 @@ class StockChartRepositoryImpl(private val api: StockChartAPI) : StockChartRepos
         if (response.isSuccessful && result?.result != null) {
             emit(Result.success(result.result.getOrNull(0).toDomainModel()))
         } else {
-            emit(Result.failure(Exception(result?.error?.description ?: "Unknown error")))
+            val errorMessage = if (response.code() == 404) {
+                "No data found, symbol may be delisted"
+            } else "Unknown error"
+            emit(Result.failure(Exception(result?.error?.description ?: errorMessage)))
         }
     }.retryWhen { cause, attempt ->
         // 4. Retry the flow when IOException is thrown and the attempt count is less than 3

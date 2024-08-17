@@ -17,8 +17,8 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/IlSearch"
-            app:hintEnabled="false"
-            style="@style/TextInputLayout.OutlinedBox">
+            style="@style/TextInputLayout.OutlinedBox"
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearch"
@@ -31,9 +31,22 @@
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
+    <include
+        android:id="@+id/layoutLoading"
+        layout="@layout/layout_loading"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/layoutStarter"
+        layout="@layout/layout_starter_chart"
+        tools:visibility="gone" />
+
     <ScrollView
+        android:id="@+id/svMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"

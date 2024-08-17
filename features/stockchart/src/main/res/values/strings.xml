@@ -7,4 +7,6 @@
     <string name="title_open">Open</string>
     <string name="title_previous_close">Previous Close</string>
     <string name="hint_search_stock">Search stock</string>
+    <string name="title_starter">Dive into the market</string>
+    <string name="description_starter">Search for your favorite stocks now!</string>
 </resources>

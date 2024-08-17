@@ -14,7 +14,7 @@ class StockChartViewModel(
     private val getStockChartUseCase: GetStockChartUseCase,
     private val saveCurrentSearchToHistoryUseCase: SaveCurrentSearchToHistoryUseCase
 ) : ViewModel() {
-    private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Loading)
+    private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Initial)
     val stockChartState: StateFlow<StockChartState> = _stockChartState.asStateFlow()
     private val _saveHistoryState =
         MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
@@ -53,6 +53,7 @@ class StockChartViewModel(
 }
 
 sealed class StockChartState {
+    data object Initial : StockChartState()
     data object Loading : StockChartState()
     data class Success(val chartResult: ChartResult) : StockChartState()
     data class Error(val message: String) : StockChartState()

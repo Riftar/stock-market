@@ -3,6 +3,7 @@ package com.riftar.searchstock
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
@@ -59,8 +60,16 @@ class SearchStockActivity : BaseActivity<ActivitySearchStockBinding>(), StockHis
             ivBack.setOnClickListener {
                 finish()
             }
-            etSearch.doAfterTextChanged {
-                viewModel.setSearchQuery(it.toString())
+            with(etSearch) {
+                doAfterTextChanged {
+                    viewModel.setSearchQuery(it.toString())
+                }
+                setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        viewModel.onSearchClicked(text.toString())
+                    }
+                    false
+                }
             }
             btnSearch.setOnClickListener {
                 val text = etSearch.text.toString()

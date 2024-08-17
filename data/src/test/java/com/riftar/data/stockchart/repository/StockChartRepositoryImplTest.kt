@@ -72,10 +72,10 @@ class StockChartRepositoryImplTest {
     fun `getStockChart should emit failure when API return error`() = runTest {
         val mockResponse = ChartResponseWrapper(
             chart = ChartResponse(
-               error = ErrorResponse(
+                error = ErrorResponse(
                     code = "123",
                     description = "Error From API Response"
-               )
+                )
             )
         )
 
@@ -87,6 +87,20 @@ class StockChartRepositoryImplTest {
 
         assertTrue(result.isFailure)
         assertEquals("Error From API Response", result.exceptionOrNull()?.message)
+        verify(api).getStockChart("AAPL")
+    }
+
+
+    @Test
+    fun `getStockChart should emit failure when API return 404`() = runTest {
+        `when`(api.getStockChart("AAPL")).thenReturn(
+            Response.error(404, "".toResponseBody(null))
+        )
+
+        val result = repository.getStockChart("AAPL").first()
+
+        assertTrue(result.isFailure)
+        assertEquals("No data found, symbol may be delisted", result.exceptionOrNull()?.message)
         verify(api).getStockChart("AAPL")
     }
 
