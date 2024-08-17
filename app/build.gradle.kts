@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":core:common"))
     implementation(project(":features:stockchart"))
+    implementation(project(":features:searchstock"))
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)

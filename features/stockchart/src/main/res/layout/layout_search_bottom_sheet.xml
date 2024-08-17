@@ -65,8 +65,8 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <View
-        android:id="@+id/content"
+    <TextView
+        android:id="@+id/tvContent"
         android:layout_width="match_parent"
         android:layout_height="400dp"
         app:layout_constraintBottom_toTopOf="@id/btnSearch"

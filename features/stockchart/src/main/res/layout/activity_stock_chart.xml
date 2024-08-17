@@ -17,6 +17,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/IlSearch"
+            app:hintEnabled="false"
             style="@style/TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -25,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:cursorVisible="false"
                 android:focusable="false"
+                android:hint="@string/hint_search_stock"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
