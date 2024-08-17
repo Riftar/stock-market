@@ -41,7 +41,8 @@ class StockChartViewModel(
             saveCurrentSearchToHistoryUseCase.invoke(chartResult, searchTimeMillis)
                 .collect { result ->
                     result.onSuccess {
-                        _saveHistoryState.value = SaveStockHistoryState.Success
+                        // no need to show anything
+                        _saveHistoryState.value = SaveStockHistoryState.Initial
                     }.onFailure {
                         _saveHistoryState.value =
                             SaveStockHistoryState.Error(it.message ?: "Unknown error occurred")
@@ -60,6 +61,5 @@ sealed class StockChartState {
 
 sealed class SaveStockHistoryState {
     data object Initial : SaveStockHistoryState()
-    data object Success : SaveStockHistoryState()
     data class Error(val message: String) : SaveStockHistoryState()
 }

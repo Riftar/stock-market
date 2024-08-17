@@ -18,7 +18,8 @@ class SearchStockViewModel(private val searchStockHistoryByQuery: SearchStockHis
     ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
-    private val _searchStockState = MutableStateFlow<SearchStockState>(SearchStockState.Loading(true))
+    private val _searchStockState =
+        MutableStateFlow<SearchStockState>(SearchStockState.Loading(true))
     val searchStockState = _searchStockState.asStateFlow()
 
     fun setSearchQuery(query: String) {
@@ -44,11 +45,21 @@ class SearchStockViewModel(private val searchStockHistoryByQuery: SearchStockHis
         _searchStockState.value = SearchStockState.Loading(isLoading)
     }
 
+    fun onSearchClicked(query: String) {
+        if (query.isEmpty()) {
+            _searchStockState.value = SearchStockState.Error("Input can't be empty")
+        } else {
+            _searchStockState.value = SearchStockState.Search(query)
+        }
+    }
+
 }
 
 sealed class SearchStockState {
     data object Initial : SearchStockState()
     data class Loading(val isLoading: Boolean) : SearchStockState()
     data class EmptyLayoutVisibility(val isVisible: Boolean) : SearchStockState()
+    data class Error(val message: String) : SearchStockState()
+    data class Search(val query: String) : SearchStockState()
 }
 

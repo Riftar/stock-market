@@ -27,7 +27,6 @@ import com.riftar.stockchart.chart.ChartFormatter.dateFormatter
 import com.riftar.stockchart.chart.ChartFormatter.dollarFormatter
 import com.riftar.stockchart.chart.CustomMarkerView
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
-import com.riftar.stockchart.search.SearchStockBottomSheet
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -45,7 +44,6 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-//        viewModel.getStockChartData("AAPL", System.currentTimeMillis())
     }
 
     override fun getViewBinding() = ActivityStockChartBinding.inflate(layoutInflater)
@@ -85,10 +83,6 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
                     }
 
                     SaveStockHistoryState.Initial -> {}
-                    SaveStockHistoryState.Success -> {
-                        // todo delete
-                        showSuccessSnackBar("Success insert to History")
-                    }
                 }
             }
         }
@@ -131,12 +125,6 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             Class.forName(SEARCH_STOCK_ACTIVITY)
         )
         searchStockLauncher.launch(intent)
-    }
-
-    private fun openSearchBottomSheet() {
-        SearchStockBottomSheet.newInstance { stockCode ->
-            viewModel.getStockChartData(stockCode, System.currentTimeMillis())
-        }.show(supportFragmentManager, "SearchStockBottomSheet")
     }
 
     private fun showChartData(chartResult: ChartResult) {

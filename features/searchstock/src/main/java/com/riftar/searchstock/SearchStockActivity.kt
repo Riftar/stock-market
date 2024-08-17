@@ -47,6 +47,8 @@ class SearchStockActivity : BaseActivity<ActivitySearchStockBinding>(), StockHis
                     SearchStockState.Initial -> {}
                     is SearchStockState.EmptyLayoutVisibility -> setEmptyLayoutVisibility(it.isVisible)
                     is SearchStockState.Loading -> setLoadingBarVisibility(it.isLoading)
+                    is SearchStockState.Error -> showErrorSnackBar(it.message)
+                    is SearchStockState.Search -> sendResult(it.query)
                 }
             }
         }
@@ -62,9 +64,7 @@ class SearchStockActivity : BaseActivity<ActivitySearchStockBinding>(), StockHis
             }
             btnSearch.setOnClickListener {
                 val text = etSearch.text.toString()
-                if (text.isNotEmpty()) {
-                    sendResult(text)
-                }
+                viewModel.onSearchClicked(text)
             }
         }
     }
@@ -84,6 +84,7 @@ class SearchStockActivity : BaseActivity<ActivitySearchStockBinding>(), StockHis
     private fun setLoadingBarVisibility(isVisible: Boolean) {
         binding.progressBar.isVisible = isVisible
         binding.rvStock.isVisible = !isVisible
+        binding.tvRecentSearch.isVisible = !isVisible
     }
 
     private fun setEmptyLayoutVisibility(isVisible: Boolean) {
@@ -92,8 +93,9 @@ class SearchStockActivity : BaseActivity<ActivitySearchStockBinding>(), StockHis
             tvRecentSearch.isVisible = !isVisible
             layoutEmpty.root.isVisible = isVisible
             if (isVisible) {
+                val query = etSearch.text.toString().ifEmpty { "stock" }
                 layoutEmpty.tvTitle.text =
-                    getString(R.string.template_msg_empty, etSearch.text.toString())
+                    getString(R.string.template_msg_empty, query)
             }
         }
     }
