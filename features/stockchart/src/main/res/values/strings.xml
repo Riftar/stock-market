@@ -7,4 +7,11 @@
     <string name="title_open">Open</string>
     <string name="title_previous_close">Previous Close</string>
     <string name="hint_search_stock">Search stock</string>
+    <string name="title_starter">Dive into the market</string>
+    <string name="description_starter">Search for your favorite stocks now!</string>
+    <string name="period_1d">1D</string>
+    <string name="period_5d">5D</string>
+    <string name="period_1m">1M</string>
+    <string name="period_6m">6M</string>
+    <string name="period_ytd">YTD</string>
 </resources>

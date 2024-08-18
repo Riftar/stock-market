@@ -57,80 +57,94 @@ class StockChartRepositoryImplTest {
         )
         val mockChartResult = chartResult
 
-        `when`(api.getStockChart("AAPL")).thenReturn(
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenReturn(
             Response.success(200, mockResponse)
         )
 
-        val result = repository.getStockChart("AAPL").first()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").first()
 
         assertTrue(result.isSuccess)
         assertEquals(mockChartResult, result.getOrNull())
-        verify(api).getStockChart("AAPL")
+        verify(api).getStockChart("AAPL",  "2m", "1d")
     }
 
     @Test
     fun `getStockChart should emit failure when API return error`() = runTest {
         val mockResponse = ChartResponseWrapper(
             chart = ChartResponse(
-               error = ErrorResponse(
+                error = ErrorResponse(
                     code = "123",
                     description = "Error From API Response"
-               )
+                )
             )
         )
 
-        `when`(api.getStockChart("AAPL")).thenReturn(
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenReturn(
             Response.success(200, mockResponse)
         )
 
-        val result = repository.getStockChart("AAPL").first()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").first()
 
         assertTrue(result.isFailure)
         assertEquals("Error From API Response", result.exceptionOrNull()?.message)
-        verify(api).getStockChart("AAPL")
+        verify(api).getStockChart("AAPL",  "2m", "1d")
+    }
+
+
+    @Test
+    fun `getStockChart should emit failure when API return 404`() = runTest {
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenReturn(
+            Response.error(404, "".toResponseBody(null))
+        )
+
+        val result = repository.getStockChart("AAPL",  "2m", "1d").first()
+
+        assertTrue(result.isFailure)
+        assertEquals("No data found, symbol may be delisted", result.exceptionOrNull()?.message)
+        verify(api).getStockChart("AAPL",  "2m", "1d")
     }
 
     @Test
     fun `getStockChart should emit failure when API call is unsuccessful`() = runTest {
 
-        `when`(api.getStockChart("AAPL")).thenReturn(
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenReturn(
             Response.error(500, "".toResponseBody(null))
         )
 
-        val result = repository.getStockChart("AAPL").first()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").first()
         assertTrue(result.isFailure)
         assertEquals("Unknown error", result.exceptionOrNull()?.message)
-        verify(api).getStockChart("AAPL")
+        verify(api).getStockChart("AAPL",  "2m", "1d")
     }
 
     @Test
     fun `getStockChart should emit failure when exception is thrown`() = runTest {
-        `when`(api.getStockChart("AAPL")).thenThrow(RuntimeException("Error Occurred"))
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenThrow(RuntimeException("Error Occurred"))
 
-        val result = repository.getStockChart("AAPL").last()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").last()
         assertTrue(result.isFailure)
         assertEquals("Error Occurred", result.exceptionOrNull()?.message)
-        verify(api).getStockChart("AAPL")
+        verify(api).getStockChart("AAPL",  "2m", "1d")
     }
 
     @Test
     fun `getStockChart should retry 3 times when IOException is thrown`() = runTest {
-        `when`(api.getStockChart("AAPL")).thenThrow(IOException("Error Occurred"))
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenThrow(IOException("Error Occurred"))
 
-        val result = repository.getStockChart("AAPL").last()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").last()
         assertTrue(result.isFailure)
         assertEquals("Error Occurred", result.exceptionOrNull()?.message)
-        verify(api, times(4)).getStockChart("AAPL")
+        verify(api, times(4)).getStockChart("AAPL",  "2m", "1d")
     }
 
     @Test
     fun `getStockChart should not retry when exception besides IOException is thrown`() = runTest {
-        `when`(api.getStockChart("AAPL")).thenThrow(RuntimeException("Error Occurred"))
+        `when`(api.getStockChart("AAPL",  "2m", "1d")).thenThrow(RuntimeException("Error Occurred"))
 
-        val result = repository.getStockChart("AAPL").last()
+        val result = repository.getStockChart("AAPL",  "2m", "1d").last()
         assertTrue(result.isFailure)
         assertEquals("Error Occurred", result.exceptionOrNull()?.message)
-        verify(api, times(1)).getStockChart("AAPL")
+        verify(api, times(1)).getStockChart("AAPL",  "2m", "1d")
     }
 
     private val chartResultResponse = ResultResponse(

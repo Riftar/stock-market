@@ -13,11 +13,11 @@ fun ChartResult.toStockHistory(searchTimeMillis: Long) = StockHistory(
 )
 
 fun ChartResult.calculateGainOrLoss(): Double {
-    val diff = this.meta.regularMarketPrice - this.meta.previousClose
+    val diff = this.meta.regularMarketPrice - this.meta.chartPreviousClose
     return diff
 }
 
 fun ChartResult.calculatePercentageChange(): Double {
-    val percentageChange = this.calculateGainOrLoss() / this.meta.previousClose * 100
+    val percentageChange = (this.calculateGainOrLoss() / this.meta.chartPreviousClose) * 100
     return percentageChange
 }

@@ -17,8 +17,8 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/IlSearch"
-            app:hintEnabled="false"
-            style="@style/TextInputLayout.OutlinedBox">
+            style="@style/TextInputLayout.OutlinedBox"
+            app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSearch"
@@ -31,9 +31,22 @@
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
+    <include
+        android:id="@+id/layoutLoading"
+        layout="@layout/layout_loading"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/layoutStarter"
+        layout="@layout/layout_starter_chart"
+        tools:visibility="gone" />
+
     <ScrollView
+        android:id="@+id/svMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,33 +142,59 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
                         android:background="@drawable/bg_button_period"
-                        android:orientation="horizontal"
-                        android:padding="4dp">
+                        android:orientation="vertical">
 
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.Selected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="1D" />
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/periodRangeChipGroup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingHorizontal="16dp"
+                            app:checkedChip="@+id/chip1D"
+                            app:selectionRequired="true"
+                            app:singleSelection="true">
 
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.NotSelected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="5D" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip1D"
+                                style="@style/Chip.Period"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="1d"
+                                android:text="@string/period_1d" />
 
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.NotSelected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="1M" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip5D"
+                                style="@style/Chip.Period"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="5d"
+                                android:text="@string/period_5d" />
 
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.NotSelected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="6M" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip1M"
+                                style="@style/Chip.Period"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="1mo"
+                                android:text="@string/period_1m" />
 
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Button.Period.NotSelected"
-                            android:layout_marginHorizontal="4dp"
-                            android:text="YTD" />
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chip6M"
+                                style="@style/Chip.Period"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="6mo"
+                                android:text="@string/period_6m" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipYTD"
+                                style="@style/Chip.Period"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:tag="ytd"
+                                android:text="@string/period_ytd" />
+
+                        </com.google.android.material.chip.ChipGroup>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

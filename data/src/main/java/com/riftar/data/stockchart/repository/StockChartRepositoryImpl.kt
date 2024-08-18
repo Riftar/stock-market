@@ -12,16 +12,27 @@ import kotlinx.coroutines.flow.retryWhen
 import okio.IOException
 
 class StockChartRepositoryImpl(private val api: StockChartAPI) : StockChartRepository {
-    override fun getStockChart(stockCode: String): Flow<Result<ChartResult>> = flow {
+    override fun getStockChart(
+        stockCode: String,
+        interval: String,
+        periodRange: String
+    ): Flow<Result<ChartResult>> = flow {
         // 1. Call the API and get the response
-        val response = api.getStockChart(stockCode)
+        val response = api.getStockChart(
+            stockCode = stockCode,
+            interval = interval,
+            periodRange = periodRange
+        )
         val result = response.body()?.chart
 
         // 2. Check if the response is successful and the result is not null
         if (response.isSuccessful && result?.result != null) {
             emit(Result.success(result.result.getOrNull(0).toDomainModel()))
         } else {
-            emit(Result.failure(Exception(result?.error?.description ?: "Unknown error")))
+            val errorMessage = if (response.code() == 404) {
+                "No data found, symbol may be delisted"
+            } else "Unknown error"
+            emit(Result.failure(Exception(result?.error?.description ?: errorMessage)))
         }
     }.retryWhen { cause, attempt ->
         // 4. Retry the flow when IOException is thrown and the attempt count is less than 3

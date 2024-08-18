@@ -1,13 +1,14 @@
 package com.riftar.stockchart.chart
 
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.riftar.common.helper.convertToUSD
 import com.riftar.common.helper.unixTimestampToDate
 
 object ChartFormatter {
     val dollarFormatter = object : IndexAxisValueFormatter() {
 
         override fun getFormattedValue(value: Float): String {
-            return "$${value.toInt()}"
+            return value.convertToUSD()
         }
 
         override fun setValues(values: Array<out String>?) {

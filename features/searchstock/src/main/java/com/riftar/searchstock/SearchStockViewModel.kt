@@ -8,6 +8,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.riftar.domain.searchhistory.model.StockHistory
 import com.riftar.domain.searchhistory.usecase.SearchStockHistoryByQuery
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +28,7 @@ class SearchStockViewModel(private val searchStockHistoryByQuery: SearchStockHis
         _searchQuery.value = query
     }
 
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     fun getSearchHistory(): Flow<PagingData<StockHistory>> {
         return _searchQuery
             .debounce(1000)

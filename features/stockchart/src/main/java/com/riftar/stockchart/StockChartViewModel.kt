@@ -14,20 +14,44 @@ class StockChartViewModel(
     private val getStockChartUseCase: GetStockChartUseCase,
     private val saveCurrentSearchToHistoryUseCase: SaveCurrentSearchToHistoryUseCase
 ) : ViewModel() {
-    private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Loading)
+    private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Initial)
     val stockChartState: StateFlow<StockChartState> = _stockChartState.asStateFlow()
-    private val _saveHistoryState =
-        MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
-    val saveHistoryState: StateFlow<SaveStockHistoryState> = _saveHistoryState.asStateFlow()
 
-    fun getStockChartData(stockCode: String, searchTimeMillis: Long) {
+    private val _periodState = MutableStateFlow("1d")
+    private val periodState = _periodState.asStateFlow()
+
+    private var currentStockCode: String? = null
+    private var currentSearchTimeMillis: Long = 0
+
+    fun setStockCode(stockCode: String, searchTimeMillis: Long) {
+        currentStockCode = stockCode
+        currentSearchTimeMillis = searchTimeMillis
+        getStockChartData()
+    }
+
+    fun setPeriodState(period: String) {
+        _periodState.value = period
+    }
+
+    init {
+        viewModelScope.launch {
+            periodState.collect {
+                getStockChartData()
+            }
+        }
+    }
+
+    private fun getStockChartData() {
+        val stockCode = currentStockCode ?: return
+        val period = _periodState.value
+
         viewModelScope.launch {
             _stockChartState.value = StockChartState.Loading
-            getStockChartUseCase.invoke(stockCode)
+            getStockChartUseCase.invoke(stockCode, period)
                 .collect { result ->
                     result.onSuccess { data ->
                         _stockChartState.value = StockChartState.Success(data)
-                        saveCurrentSearchToHistory(data, searchTimeMillis)
+                        saveCurrentSearchToHistory(data, currentSearchTimeMillis)
                     }.onFailure { exception ->
                         _stockChartState.value =
                             StockChartState.Error(exception.message ?: "Unknown error occurred")
@@ -42,10 +66,9 @@ class StockChartViewModel(
                 .collect { result ->
                     result.onSuccess {
                         // no need to show anything
-                        _saveHistoryState.value = SaveStockHistoryState.Initial
                     }.onFailure {
-                        _saveHistoryState.value =
-                            SaveStockHistoryState.Error(it.message ?: "Unknown error occurred")
+                        _stockChartState.value =
+                            StockChartState.Error(it.message ?: "Unknown error occurred")
                     }
                 }
         }
@@ -53,13 +76,8 @@ class StockChartViewModel(
 }
 
 sealed class StockChartState {
+    data object Initial : StockChartState()
     data object Loading : StockChartState()
     data class Success(val chartResult: ChartResult) : StockChartState()
     data class Error(val message: String) : StockChartState()
-}
-
-
-sealed class SaveStockHistoryState {
-    data object Initial : SaveStockHistoryState()
-    data class Error(val message: String) : SaveStockHistoryState()
 }
