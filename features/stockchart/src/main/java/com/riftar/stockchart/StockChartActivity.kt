@@ -6,12 +6,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.data.Entry
+import com.google.android.material.chip.Chip
 import com.riftar.common.helper.convertToUSD
 import com.riftar.common.helper.formatNumber
-import com.riftar.common.helper.getPercentageColor
 import com.riftar.common.helper.orZero
 import com.riftar.common.helper.roundTwoDecimal
 import com.riftar.common.view.NavigationConstants.SEARCH_STOCK_ACTIVITY
@@ -22,6 +21,7 @@ import com.riftar.domain.searchhistory.mapper.calculatePercentageChange
 import com.riftar.domain.stockchart.model.ChartResult
 import com.riftar.stockchart.chart.ChartHelper.createLineDataSet
 import com.riftar.stockchart.chart.ChartHelper.setupChartLayout
+import com.riftar.stockchart.chart.getPercentageColor
 import com.riftar.stockchart.databinding.ActivityStockChartBinding
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -77,17 +77,6 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
                 }
             }
         }
-        lifecycleScope.launch {
-            viewModel.saveHistoryState.collect {
-                when (it) {
-                    is SaveStockHistoryState.Error -> {
-                        showErrorSnackBar(it.message)
-                    }
-
-                    SaveStockHistoryState.Initial -> {}
-                }
-            }
-        }
     }
 
     private fun showSuccessLayout() {
@@ -120,13 +109,10 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             tvPercentage.text = "${
                 chartResult.calculatePercentageChange().roundTwoDecimal()
             }% (${chartResult.calculateGainOrLoss().convertToUSD()})"
-            val color = getPercentageColor(
-                chartResult.meta.regularMarketPrice,
-                chartResult.meta.previousClose
-            )
+            val color = getPercentageColor(chartResult.calculateGainOrLoss())
             tvPercentage.setTextColor(ContextCompat.getColor(this@StockChartActivity, color))
 
-            tvPrevClose.text = chartResult.meta.previousClose.convertToUSD()
+            tvPrevClose.text = chartResult.meta.chartPreviousClose.convertToUSD()
             tvOpen.text =
                 chartResult.indicators.quote.getOrNull(0)?.open?.getOrNull(0).convertToUSD()
             tvDayHigh.text = chartResult.meta.regularMarketDayHigh.convertToUSD()
@@ -135,15 +121,15 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             tv52High.text = chartResult.meta.fiftyTwoWeekHigh.convertToUSD()
             tv52Low.text = chartResult.meta.fiftyTwoWeekLow.convertToUSD()
 
-            setButtonListener()
+            setChipPeriodListener()
         }
     }
 
-    private fun setButtonListener() {
-        binding.layoutButtonPeriod.children.forEach { btn ->
-            btn.setOnClickListener {
-                viewModel.setPeriodState(btn.tag.toString())
-            }
+    private fun setChipPeriodListener() {
+        binding.periodRangeChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            val selectedFilterTag =
+                binding.periodRangeChipGroup.findViewById<Chip>(checkedIds.first()).tag
+            viewModel.setPeriodState(selectedFilterTag.toString())
         }
     }
 
@@ -157,7 +143,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
 
     private fun showChartData(chartResult: ChartResult) {
 
-        val chartData = chartResult.timestamp.mapIndexed { index, i ->
+        val chartData = chartResult.timestamp.mapIndexed { _, i ->
             Entry(
                 i.toFloat(),
                 chartResult.indicators.quote.getOrNull(0)?.close?.getOrNull(0).orZero().toFloat()
@@ -165,7 +151,11 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
         }
 
         with(binding.layoutChart) {
-            val lineData = createLineDataSet(this@StockChartActivity, chartData)
+            val lineData = createLineDataSet(
+                this@StockChartActivity,
+                chartResult.calculateGainOrLoss(),
+                chartData
+            )
             chart.setupChartLayout(chartResult)
             chart.data = lineData
             chart.notifyDataSetChanged()

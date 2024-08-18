@@ -47,6 +47,7 @@ object ChartHelper {
                     this@setupChartLayout.context,
                     com.riftar.common.R.color.text_color_primary
                 )
+                removeAllLimitLines()
                 addLimitLine(limit)
                 setDrawLimitLinesBehindData(true)
                 valueFormatter = dollarFormatter
@@ -68,6 +69,7 @@ object ChartHelper {
                     this@setupChartLayout.context,
                     com.riftar.common.R.color.text_color_primary
                 )
+                spaceMin = 1f
             }
             extraBottomOffset = 4f
             setDrawMarkers(true)
@@ -87,13 +89,17 @@ object ChartHelper {
         }
     }
 
-    fun createLineDataSet(context: Context, chartData: List<Entry>): LineData {
+    fun createLineDataSet(
+        context: Context,
+        gainOrLossValue: Double,
+        chartData: List<Entry>
+    ): LineData {
         val lineDataSet = LineDataSet(chartData, "")
         lineDataSet.apply {
             mode = LineDataSet.Mode.HORIZONTAL_BEZIER
             color = ContextCompat.getColor(
                 context,
-                com.riftar.common.R.color.green_profit
+                getPercentageColor(gainOrLossValue)
             )
             highLightColor = ContextCompat.getColor(
                 context,
@@ -105,10 +111,26 @@ object ChartHelper {
             setDrawFilled(true)
             fillDrawable = AppCompatResources.getDrawable(
                 context,
-                R.drawable.bg_chart_green_gradient
+                getBackgroundChartColor(gainOrLossValue)
             )
         }
 
         return LineData(lineDataSet)
+    }
+}
+
+fun getPercentageColor(gainOrLossValue: Double): Int {
+    return if (gainOrLossValue < 0) {
+        com.riftar.common.R.color.red_loss
+    } else {
+        com.riftar.common.R.color.green_profit
+    }
+}
+
+fun getBackgroundChartColor(gainOrLossValue: Double): Int {
+    return if (gainOrLossValue < 0) {
+        R.drawable.bg_chart_red_gradient
+    } else {
+        R.drawable.bg_chart_green_gradient
     }
 }

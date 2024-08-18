@@ -16,11 +16,9 @@ class StockChartViewModel(
 ) : ViewModel() {
     private val _stockChartState = MutableStateFlow<StockChartState>(StockChartState.Initial)
     val stockChartState: StateFlow<StockChartState> = _stockChartState.asStateFlow()
-    private val _saveHistoryState =
-        MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
-    val saveHistoryState: StateFlow<SaveStockHistoryState> = _saveHistoryState.asStateFlow()
+
     private val _periodState = MutableStateFlow("1d")
-    val periodState = _periodState.asStateFlow()
+    private val periodState = _periodState.asStateFlow()
 
     private var currentStockCode: String? = null
     private var currentSearchTimeMillis: Long = 0
@@ -68,10 +66,9 @@ class StockChartViewModel(
                 .collect { result ->
                     result.onSuccess {
                         // no need to show anything
-                        _saveHistoryState.value = SaveStockHistoryState.Initial
                     }.onFailure {
-                        _saveHistoryState.value =
-                            SaveStockHistoryState.Error(it.message ?: "Unknown error occurred")
+                        _stockChartState.value =
+                            StockChartState.Error(it.message ?: "Unknown error occurred")
                     }
                 }
         }
@@ -83,10 +80,4 @@ sealed class StockChartState {
     data object Loading : StockChartState()
     data class Success(val chartResult: ChartResult) : StockChartState()
     data class Error(val message: String) : StockChartState()
-}
-
-
-sealed class SaveStockHistoryState {
-    data object Initial : SaveStockHistoryState()
-    data class Error(val message: String) : SaveStockHistoryState()
 }

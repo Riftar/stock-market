@@ -2,21 +2,35 @@
 <resources>
     <!--    Styles for button-->
 
-    <style name="Button.Period.Selected" parent="Widget.MaterialComponents.Button">
+    <style name="Button.Main" parent="Widget.MaterialComponents.Button">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:textColor">@color/background_solid</item>
         <item name="textAllCaps">true</item>
-        <item name="android:backgroundTint">@color/background_solid</item>
+        <item name="android:backgroundTint">@color/text_color_primary</item>
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="Button.Period.NotSelected" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="Button.Main.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/text_color_primary</item>
         <item name="textAllCaps">true</item>
         <item name="android:layout_weight">1</item>
+    </style>
+
+    <!--    Styles for chip-->
+    <style name="Chip.Period" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:focusable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="chipCornerRadius">8dp</item>
+        <item name="chipSpacingHorizontal">4dp</item>
+        <item name="android:insetLeft">8dp</item>
+        <item name="android:insetRight">8dp</item>
+        <item name="chipBackgroundColor">@color/bg_period_state_selector</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAppearance">@style/Body.Bold</item>
     </style>
 
     <!--    Styles for text input layout-->

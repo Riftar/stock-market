@@ -14,7 +14,7 @@ class ChartResultToHistoryMapperKtTest {
     @Test
     fun testCalculateGainOrLoss() {
         val regularMarketPrice = chartResult.meta.regularMarketPrice
-        val previousClose = chartResult.meta.previousClose
+        val previousClose = chartResult.meta.chartPreviousClose
         val diff = regularMarketPrice - previousClose
         val gainOrLoss = chartResult.calculateGainOrLoss()
         assert(gainOrLoss == diff)
@@ -23,7 +23,7 @@ class ChartResultToHistoryMapperKtTest {
     @Test
     fun testCalculatePercentageChange() {
         val regularMarketPrice = chartResult.meta.regularMarketPrice
-        val previousClose = chartResult.meta.previousClose
+        val previousClose = chartResult.meta.chartPreviousClose
         val percentageChange = (regularMarketPrice - previousClose) / previousClose * 100
         assert(chartResult.calculatePercentageChange() == percentageChange)
     }

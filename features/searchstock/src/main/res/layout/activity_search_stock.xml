@@ -91,13 +91,11 @@
 
     <Button
         android:id="@+id/btnSearch"
-        style="@style/Button.Period.Selected"
+        style="@style/Button.Main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:backgroundTint="@color/text_color_primary"
         android:text="@string/action_search"
-        android:textColor="@color/background_solid"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
