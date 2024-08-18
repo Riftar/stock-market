@@ -14,7 +14,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "BASE_URL", "\"https://query1.finance.yahoo.com/v8/finance/\"")
+        buildConfigField("String", "BASE_URL", "\"https://query1.finance.yahoo.com/\"")
     }
 
     buildTypes {

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.data.Entry
 import com.riftar.common.helper.convertToUSD
@@ -107,7 +108,7 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
 
     private fun onResultReceived(intent: Intent?) {
         intent?.getStringExtra(SELECTED_STOCK_INTENT)?.let {
-            viewModel.getStockChartData(it, System.currentTimeMillis())
+            viewModel.setStockCode(it, System.currentTimeMillis())
         }
     }
 
@@ -133,6 +134,16 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
             tvVolume.text = chartResult.meta.regularMarketVolume.formatNumber()
             tv52High.text = chartResult.meta.fiftyTwoWeekHigh.convertToUSD()
             tv52Low.text = chartResult.meta.fiftyTwoWeekLow.convertToUSD()
+
+            setButtonListener()
+        }
+    }
+
+    private fun setButtonListener() {
+        binding.layoutButtonPeriod.children.forEach { btn ->
+            btn.setOnClickListener {
+                viewModel.setPeriodState(btn.tag.toString())
+            }
         }
     }
 

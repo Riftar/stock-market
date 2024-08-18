@@ -19,15 +19,41 @@ class StockChartViewModel(
     private val _saveHistoryState =
         MutableStateFlow<SaveStockHistoryState>(SaveStockHistoryState.Initial)
     val saveHistoryState: StateFlow<SaveStockHistoryState> = _saveHistoryState.asStateFlow()
+    private val _periodState = MutableStateFlow("1d")
+    val periodState = _periodState.asStateFlow()
 
-    fun getStockChartData(stockCode: String, searchTimeMillis: Long) {
+    private var currentStockCode: String? = null
+    private var currentSearchTimeMillis: Long = 0
+
+    fun setStockCode(stockCode: String, searchTimeMillis: Long) {
+        currentStockCode = stockCode
+        currentSearchTimeMillis = searchTimeMillis
+        getStockChartData()
+    }
+
+    fun setPeriodState(period: String) {
+        _periodState.value = period
+    }
+
+    init {
+        viewModelScope.launch {
+            periodState.collect {
+                getStockChartData()
+            }
+        }
+    }
+
+    private fun getStockChartData() {
+        val stockCode = currentStockCode ?: return
+        val period = _periodState.value
+
         viewModelScope.launch {
             _stockChartState.value = StockChartState.Loading
-            getStockChartUseCase.invoke(stockCode)
+            getStockChartUseCase.invoke(stockCode, period)
                 .collect { result ->
                     result.onSuccess { data ->
                         _stockChartState.value = StockChartState.Success(data)
-                        saveCurrentSearchToHistory(data, searchTimeMillis)
+                        saveCurrentSearchToHistory(data, currentSearchTimeMillis)
                     }.onFailure { exception ->
                         _stockChartState.value =
                             StockChartState.Error(exception.message ?: "Unknown error occurred")

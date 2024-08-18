@@ -146,28 +146,38 @@
                         android:padding="4dp">
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPeriod1D"
                             style="@style/Button.Period.Selected"
                             android:layout_marginHorizontal="4dp"
+                            android:tag="1d"
                             android:text="1D" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPeriod5D"
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
+                            android:tag="5d"
                             android:text="5D" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPeriod1M"
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
+                            android:tag="1mo"
                             android:text="1M" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPeriod6M"
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
+                            android:tag="6mo"
                             android:text="6M" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPeriodYTD"
                             style="@style/Button.Period.NotSelected"
                             android:layout_marginHorizontal="4dp"
+                            android:tag="ytd"
                             android:text="YTD" />
                     </LinearLayout>
                 </LinearLayout>
