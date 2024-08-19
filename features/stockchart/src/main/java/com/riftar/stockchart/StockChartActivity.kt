@@ -143,10 +143,10 @@ class StockChartActivity : BaseActivity<ActivityStockChartBinding>() {
 
     private fun showChartData(chartResult: ChartResult) {
 
-        val chartData = chartResult.timestamp.mapIndexed { _, i ->
+        val chartData = chartResult.timestamp.mapIndexed { index, value ->
             Entry(
-                i.toFloat(),
-                chartResult.indicators.quote.getOrNull(0)?.close?.getOrNull(0).orZero().toFloat()
+                value.toFloat(),
+                chartResult.indicators.quote.getOrNull(0)?.close?.getOrNull(index).orZero().toFloat()
             )
         }
 
